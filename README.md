@@ -5,8 +5,12 @@ Drive Uploader 是一個可以將檔案上傳 CSV 檔案到 Google Drive 的小�
 
 ## 設定 Google OAuth 驗證
 
-1. 依照 [Google Drive API 文件](https://developers.google.com/drive/api/quickstart/nodejs#set_up_your_environment)
-2. 
+依照 [Google Drive API 文件](https://developers.google.com/drive/api/quickstart/nodejs#set_up_your_environment) 設定環境，包括以下步驟：
+
+1. [啟用API](https://console.cloud.google.com/flows/enableapi?apiid=drive.googleapis.com&hl=zh-tw)
+2. [設定 OAuth 同意畫面](https://console.cloud.google.com/apis/credentials/consent?hl=zh-tw)
+3. [建立憑證](https://console.cloud.google.com/apis/credentials?hl=zh-tw)
+4. 下載憑證檔案，並將憑證檔案放到專案根目錄下，並命名為 `credentials.json`
 
 
 ## 使用方法
