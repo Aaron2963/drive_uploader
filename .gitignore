@@ -1,6 +1,8 @@
 node_modules
-to-upload/*.csv
 
 # credentials
 credentials.json
 token.json
+
+# settings
+settings.json

@@ -1,39 +1,74 @@
-const fs = require('fs');
-const path = require('path');
-const process = require('process');
-const {authorize} = require('./authorize.js');
-const {google} = require('googleapis');
+const readlineSync = require("readline-sync");
+const { authorize } = require("./src/authorize.js");
+const { uploadFiles } = require("./src/upload-files.js");
+const { AppSettings } = require("./src/app-settings.js");
 
-async function uploadFiles(client, settings) {
-  const drive = google.drive({version: 'v3', auth: client});
-  const dir = path.join(process.cwd(), 'to-upload');
-  const files = fs.readdirSync(dir);
-  for (const file of files) {
-    if (!file.endsWith('.csv')) continue;
-    const filePath = path.join(dir, file);
-    const fileMetadata = {
-      name: file,
-      parents: [settings.parentFolderId],
-    };
-    const media = {
-      mimeType: 'text/csv',
-      body: fs.createReadStream(filePath),
-    };
-    const res = await drive.files.create({
-      resource: fileMetadata,
-      media: media,
-      fields: 'id',
-    });
-    if (!res.data.id) throw new Error('Failed to upload file');
-    console.log('Uploaded file %s with ID: %s', file, res.data.id);
+async function doUpload() {
+  const client = await authorize();
+  let settings = new AppSettings();
+  while (settings.isEmpty) {
+    console.log("\n[WARN] Please configure settings first\n");
+    doSettings();
+    settings = new AppSettings();
+  }
+  await uploadFiles(client, settings);
+}
+
+async function doAuthorize() {
+  await authorize();
+}
+
+async function doSettings() {
+  const settings = new AppSettings();
+  console.log("Source folder path: ", settings.sourceFolderPath);
+  console.log("Parent folder ID: ", settings.parentFolderId);
+  const toEdit = readlineSync.question("Edit settings? (y/N): ");
+  if (toEdit.toLowerCase() !== "y") return;
+  let loop = true;
+  while (loop) {
+    let sourceFolderPath = readlineSync.question("Enter source folder path on local machine: ");
+    sourceFolderPath = sourceFolderPath.trim();
+    if (sourceFolderPath.length > 0) {
+      settings.set("sourceFolderPath", sourceFolderPath);
+      loop = false;
+    } else if (
+      !settings.sourceFolderPath ||
+      settings.sourceFolderPath.length === 0
+    ) {
+      console.log("Source folder path cannot be empty");
+    } else {
+      loop = false;
+    }
+  }
+  loop = true;
+  while (loop) {
+    let parentFolderId = readlineSync.question("Enter parent Google Drive folder ID: ");
+    parentFolderId = parentFolderId.trim();
+    if (parentFolderId.length > 0) {
+      settings.set("parentFolderId", parentFolderId);
+      loop = false;
+    } else if (!settings.parentFolderId || settings.parentFolderId.length === 0) {
+      console.log("Parent folder ID cannot be empty");
+    } else {
+      loop = false;
+    }
   }
 }
 
 async function main() {
-  const client = await authorize();
-  const settingsPath = path.join(process.cwd(), 'settings.json');
-  const settings = JSON.parse(fs.readFileSync(settingsPath));
-  await uploadFiles(client, settings);
+  const args = process.argv.slice(2);
+  if (args.length === 0) {
+    await doUpload();
+    return;
+  }
+  if (args.length === 1 && args[0] === "authorize") {
+    await doAuthorize();
+    return;
+  }
+  if (args.length === 1 && args[0] === "settings") {
+    await doSettings();
+    return;
+  }
 }
 
 main();
