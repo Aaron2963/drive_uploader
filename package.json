@@ -7,13 +7,15 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
     "auth": "node index.js authorize",
-    "settings": "node index.js settings"
+    "settings": "node index.js settings",
+    "build": "pkg index.js --targets node18-win-x64,node18-linux-x64 --output public/drive_uploader"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@google-cloud/local-auth": "^2.1.0",
     "googleapis": "^105.0.0",
+    "pkg": "^5.8.1",
     "readline-sync": "^1.4.10"
   }
 }
