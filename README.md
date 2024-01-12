@@ -30,9 +30,18 @@ Drive Uploader 是一個可以將檔案上傳到 Google Drive 的小工具
 
 ## 使用方法
 
+### 上傳檔案
+
 1. 執行 `npm run start`
 2. 如果是第一次執行，需要進行幾項設定：
-   1. 登入 Google 帳號：跳出 Google 登入頁面，請登入您的 Google 帳號
-   2. 填入上傳目的地的資料夾 ID：請填入 Google Drive 上傳目的地的資料夾 ID
-   3. 填入上傳資料夾的路徑
+   - 填入上傳目的地的資料夾 ID：請填入 Google Drive 上傳目的地的資料夾 ID
+   - 填入待上傳資料夾的路徑
 3. Drive Uploader 會將資料夾下的所有檔案上傳到 Google Drive 上傳目的地的資料夾下
+
+### 變更上傳目的地或待上傳資料夾
+
+1. 執行 `npm run settings`
+2. 將在終端機中顯示目前的設定，並詢問您是否要變更，輸入 `y` 並按下 Enter 鍵
+3. 先輸入待上傳資料夾的路徑，再輸入上傳目的地的資料夾 ID
+
+或者您也可以直接修改或刪除 `settings.json` 檔案，然後執行 `npm run start`
